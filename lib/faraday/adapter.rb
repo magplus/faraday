@@ -14,6 +14,7 @@ module Faraday
       :EMHttp            => 'em_http',
       :Patron            => 'patron',
       :Excon             => 'excon',
+      :ApacheClient      => 'apache_client',
       :Test              => 'test'
 
     register_middleware \
@@ -25,7 +26,8 @@ module Faraday
       :patron              => :Patron,
       :em_synchrony        => :EMSynchrony,
       :em_http             => :EMHttp,
-      :excon               => :Excon
+      :excon               => :Excon,
+      :apache_client       => :ApacheClient
 
     module Parallelism
       attr_writer :supports_parallel

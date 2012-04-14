@@ -20,6 +20,7 @@ end
 platforms :jruby do
   gem 'jruby-openssl', '~> 0.7'
   gem 'ffi-ncurses', '~> 0.3'
+  gem 'jruby-httpclient', '~> 1.1', :require => false
 end
 
 gemspec
