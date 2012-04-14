@@ -8,7 +8,13 @@ else
       adapters = if ENV['ADAPTER']
         ENV['ADAPTER'].split(':').map { |name| Faraday::Adapter.lookup_middleware name.to_sym }
       else
-        loaded_adapters  = Faraday::Adapter.all_loaded_constants
+        constants = Faraday::Adapter.constants.map { |c| Faraday::Adapter.const_get(c) }
+        adapters = constants.select { |c| c.respond_to?(:loaded?) }
+        loaded_adapters = adapters.select { |a| a.loaded? }
+        (adapters - loaded_adapters).each do |adapter|
+          puts "Skipping #{adapter} => #{adapter.load_error}"
+        end
+
         loaded_adapters -= [Faraday::Adapter::Test, Faraday::Adapter::ActionDispatch]
         # https://github.com/geemus/excon/issues/98
         loaded_adapters -= [Faraday::Adapter::Excon] if defined? RUBY_ENGINE and "rbx" == RUBY_ENGINE
