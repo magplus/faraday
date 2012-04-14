@@ -21,5 +21,5 @@ module Adapters
       }
       @connection.get('/hello')
     end
-  end
+  end if defined?(::HTTP::Client)
 end

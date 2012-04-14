@@ -15,6 +15,5 @@ module Adapters
       }
       @connection.get('/world', nil, :user_agent => 'Faraday Agent')
     end
-
-  end if defined? ::Typhoeus
+  end if defined?(::Typhoeus)
 end
