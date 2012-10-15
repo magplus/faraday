@@ -3,7 +3,7 @@ require 'set'
 require 'forwardable'
 require 'uri'
 
-Faraday.require_libs 'builder', 'request', 'response', 'utils'
+Faraday.require_libs 'builder', 'request', 'response', 'utils', 'parameters'
 
 module Faraday
   class Connection
@@ -26,6 +26,9 @@ module Faraday
       @headers = Utils::Headers.new
       @params  = Utils::ParamsHash.new
       @options = options[:request] || {}
+      unless @options[:params_encoder]
+        @options[:params_encoder] = Faraday::NestedParamsEncoder
+      end
       @ssl     = options[:ssl]     || {}
 
       @parallel_manager = nil
@@ -252,9 +255,9 @@ module Faraday
     def build_url(url, extra_params = nil)
       uri = build_exclusive_url(url)
 
-      query_values = self.params.dup.merge_query(uri.query)
+      query_values = self.params.dup.merge_query(uri.query, options[:params_encoder])
       query_values.update extra_params if extra_params
-      uri.query = query_values.empty? ? nil : query_values.to_query
+      uri.query = query_values.empty? ? nil : query_values.to_query(options[:params_encoder])
 
       uri
     end
@@ -274,7 +277,7 @@ module Faraday
         base.path = base.path + '/'  # ensure trailing slash
       end
       uri = url ? base + url : base
-      uri.query = params.to_query if params
+      uri.query = params.to_query(options[:params_encoder]) if params
       uri.query = nil if uri.query and uri.query.empty?
       uri
     end
