@@ -153,7 +153,7 @@ module Faraday
         super
         normalized_path = Faraday::Utils.normalize_path(env[:url])
 
-        if stub = stubs.match(env[:method], normalized_path, env.request_headers, env[:body])
+        if stub = stubs.match(env[:method], normalized_path, env[:request_headers], env[:body])
           env[:params] = (query = env[:url].query) ?
             Faraday::Utils.parse_nested_query(query)  :
             {}
